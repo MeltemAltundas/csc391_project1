@@ -14,19 +14,16 @@
                 <label for="site-search" class="mb-2 fw-bold">Search the hotels</label>
                 <div class="row g-2 align-items-center">
                     <div class="col-md-3">
-                        <input class="form-control" type="search" id="site-search" name="q" placeholder="Search...">
+                        <input class="form-control" type="search" id="site-search" name="q" placeholder="Search by name or city...">
                     </div>
                     <div class="col-md-2">
-                        <input class="form-control" type="date" id="checkin-date" name="checkin">
+                        <input class="form-control" type="date" id="checkin-date" name="checkin" required>
                     </div>
                     <div class="col-md-2">
-                        <input class="form-control" type="date" id="checkout-date" name="checkout">
+                        <input class="form-control" type="date" id="checkout-date" name="checkout" required>
                     </div>
                     <div class="col-md-3">
-                        <select class="form-select" name="guests" id="guests">
-                            <option value="1 Guest 1 Room">1 Guest 1 Room</option>
-                            <option value="2 Guest 1 Room">2 Guest 1 Room</option>
-                        </select>
+                        <input class="form-control" type="number" id="guests" name="guests" min="1" value="1" placeholder="Number of Guests" required>
                     </div>
                     <div class="col-md-2">
                         <button class="btn btn-primary w-100" type="submit">Search</button>
@@ -37,7 +34,7 @@
 
         <section id="results-section" class="mb-5">
             <h2 class="mb-4">Search Results</h2>
-            <div class="row g-4" id="search-results-container">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="search-results-container">
                 </div>
         </section>
     </main>
