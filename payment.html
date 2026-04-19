@@ -1,11 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Payment</title>
+    <link rel="stylesheet" href="payment.css">
 </head>
+
 <body>
-    
+
+    <div class="container">
+        <form id="paymentForm">
+            <section class="reservation-info">
+                <h2> Your Reservation Information</h2>
+                <div class="row">
+                    <div class="field">
+                        <label for="fname">Your name: <span class="required">*</span></label>
+                        <input type="text" id="fname" name="firstname" placeholder="First Name" required>
+                    </div>
+                    <div class="field">
+                        <label for="lname">Your surname: <span class="required">*</span></label>
+                        <input type="text" id="lname" name="lastname" placeholder="Last Name" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label for="email">Your E-mail Address: <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="field">
+                        <label for="phone">Your phone number: <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="555 555 55 55" required>
+                    </div>
+                </div>
+                <div class="checkbox-field">
+                    <input type="checkbox" id="approve1" name="approve" required>
+                    <label for="approve1">I approve <a href="#">Clarification Text</a>.</label>
+                </div>
+                <div class="checkbox-field">
+                    <input type="checkbox" id="approve2" name="approve" required>
+                    <label for="approve2"> I approve <a href="#">Consent Form</a>.</label>
+                </div>
+            </section>
+
+            <section class="payment-options">
+                <h2>Payment Options</h2>
+                <h3>Guarantee by Credit Card</h3>
+                <div class="field">
+                    <label for="cname">Name on the card:</label>
+                    <input type="text" id="cname" name="cardname" placeholder="Name on the card" required>
+                </div>
+                <div class="field">
+                    <label for="cnumber">Card number:</label>
+                    <input type="text" id="cnumber" name="cardnumber" placeholder="Card Number" required>
+                </div>
+                <div class="field">
+                    <label for="expadate">Expiration Date:</label>
+                    <input type="text" id="expadate" name="expirydate" placeholder="MM/YY" required>
+                </div>
+                <div class="field">
+                    <label for="cvc"> Security Number:</label>
+                    <input type="text" id="cvc" name="cvc" placeholder="CVC" required>
+                </div>
+                <div class="checkbox-field">
+                    <input type="checkbox" id="approve3" name="approve" required>
+                    <label for="approve3">I have read <a href="#">Preliminary Information Form</a> and <a
+                            href="#">Distance Sales Contract</a> and I agree.</label>
+                </div>
+                <div class="buttons">
+                    <button type="submit" class="submit-btn">Complete the booking</button>
+                </div>
+            </section>
+        </form>
+    </div>
 </body>
 </html>
