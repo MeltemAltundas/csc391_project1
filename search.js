@@ -6,25 +6,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const checkoutInput = document.getElementById('checkout-date');
     const guestsInput = document.getElementById('guests');
 
-    // Load all hotels initially with default values (1 night, 1 guest)
+    // Load all hotels by default (1 night, 1 guest) when the page loads
     fetchAndDisplayHotels("", 1, 1);
 
-    // Triggered when the user clicks "Search"
+    // Event listener for the search form submission
     searchForm.addEventListener('submit', function (e) {
         e.preventDefault(); 
         
         const searchTerm = searchInput.value.trim().toLowerCase();
         
-        // Calculate the number of nights
+        // Calculate the number of nights based on check-in and check-out dates
         let numberOfNights = 1;
         if (checkinInput.value && checkoutInput.value) {
             const checkinDate = new Date(checkinInput.value);
             const checkoutDate = new Date(checkoutInput.value);
             
-            // Calculate time difference in milliseconds
             const timeDifference = checkoutDate.getTime() - checkinDate.getTime();
-            
-            // Convert milliseconds to days (1000ms * 60s * 60m * 24h)
             const dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
             
             if (dayDifference > 0) {
@@ -35,12 +32,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        // Get the number of guests
+        // Retrieve and validate the number of guests
         let numberOfGuests = parseInt(guestsInput.value);
         if (isNaN(numberOfGuests) || numberOfGuests < 1) {
             numberOfGuests = 1;
         }
         
+        // Fetch and display results based on user inputs
         fetchAndDisplayHotels(searchTerm, numberOfNights, numberOfGuests);
     });
 
@@ -52,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 let hotels = data.hotels || [];
 
-                // 1. FILTERING
+                // 1. FILTERING: Match search term with hotel name or city
                 if (searchTerm !== "") {
                     hotels = hotels.filter(hotel => {
                         const hotelName = hotel.name ? hotel.name.toLowerCase() : "";
@@ -61,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 }
 
-                // 2. SORTING (A-Z)
+                // 2. SORTING: Alphabetical order (A-Z) by hotel name
                 hotels.sort((a, b) => {
                     const nameA = a.name ? a.name.toLowerCase() : '';
                     const nameB = b.name ? b.name.toLowerCase() : '';
@@ -70,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     return 0;
                 });
 
-                // No results handler
+                // Handle case where no results match the search query
                 if (hotels.length === 0) {
                     resultsContainer.innerHTML = `
                         <div class="col-12 mt-4 text-center w-100">
@@ -80,11 +78,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     return; 
                 }
 
-                // 3. RENDERING CARDS
+                // 3. RENDER CARDS: Create and append HTML elements for each hotel
                 hotels.forEach(hotel => {
                     const col = document.createElement('div');
-                    col.className = 'col'; // Takes grid sizing from parent row classes
+                    col.className = 'col'; 
                     
+                    // Format image URL handling relative and absolute paths
                     let imageUrl = 'https://placehold.co/300x200?text=Hotel+Image';
                     if (hotel.thumbNailUrl) {
                         imageUrl = hotel.thumbNailUrl.startsWith('http') 
@@ -92,8 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     : `https://www.travelnow.com${hotel.thumbNailUrl}`;
                     }
 
-                    // DYNAMIC PRICE CALCULATION
-                    // Total = Base Rate * Number of Nights * Number of Guests
+                    // DYNAMIC PRICE CALCULATION: Base Rate * Nights * Guests
                     const baseRate = hotel.lowRate || 0;
                     const calculatedTotal = baseRate * nights * guests;
 
@@ -114,16 +112,42 @@ document.addEventListener("DOMContentLoaded", function () {
                     `;
                     col.innerHTML = cardHtml;
 
-                    // 4. CLICK EVENT TO REDIRECT
+                    // 4. CLICK EVENT: Redirect to hotel details page with mapped data
                     const cardElement = col.querySelector('.hotel-card');
                     cardElement.addEventListener('click', function () {
-                        // Store hotel details AND the calculated price info for the details page
+                        
+                        // Map the fetched data strictly to the variable names expected by hotelDetails.js
                         const hotelDataToSave = {
                             ...hotel,
+                            
+                            // Map names (satisfies: selectedHotel.hotel_name || selectedHotel.name)
+                            hotel_name: hotel.name, 
+                            name: hotel.name,
+                            
+                            // Map addresses (satisfies: selectedHotel.addressline1 || selectedHotel.address1)
+                            addressline1: hotel.address1, 
+                            address1: hotel.address1,
+                            
+                            // Map locations (satisfies: selectedHotel.city, selectedHotel.country)
+                            city: hotel.city,
+                            country: hotel.countryCode,
+                            countryCode: hotel.countryCode,
+                            
+                            // Map descriptions (satisfies: selectedHotel.overview || selectedHotel.shortDescription)
+                            overview: hotel.locationDescription || "Welcome to our beautiful hotel in the heart of the city.",
+                            shortDescription: hotel.locationDescription,
+
+                            // Map images 
+                            photo1: imageUrl, 
+                            hotelImage: imageUrl, 
+                            
+                            // Pass calculated user search data for future use (e.g., payment page)
                             selectedNights: nights,
                             selectedGuests: guests,
                             calculatedPrice: calculatedTotal
                         };
+
+                        // Save the properly formatted object to sessionStorage and redirect
                         sessionStorage.setItem('selectedHotel', JSON.stringify(hotelDataToSave));
                         window.location.href = 'hotelDetails.html';
                     });
