@@ -23,37 +23,28 @@
         
         <section id="search-section" class="bg-white p-4 rounded shadow-sm mb-5">
             <form role="search" id="search-form">
-                <label for="site-search" class="mb-3 fw-bold fs-5">Modify your search</label>
-                <div class="row g-3 align-items-center">
-                    
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white text-muted"><i class="bi bi-search"></i></span>
-                            <input class="form-control border-start-0 ps-0" type="search" id="site-search" name="q" placeholder="Search by name or city...">
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-2">
-                        <input class="form-control" type="date" id="checkin-date" name="checkin" required>
-                    </div>
-                    
-                    <div class="col-md-2">
-                        <input class="form-control" type="date" id="checkout-date" name="checkout" required>
-                    </div>
-                    
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white text-muted"><i class="bi bi-person"></i></span>
-                            <input class="form-control border-start-0 ps-0" type="number" id="guests" name="guests" min="1" value="1" placeholder="Guests" required>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-2">
-                        <button class="btn btn-primary w-100 fw-bold" type="submit">Search</button>
-                    </div>
-
-                </div>
-            </form>
+        <label for="site-search" class="mb-2 fw-bold">Search the hotels</label>
+        <div class="row g-2 align-items-center">
+            <div class="col-md-3">
+                <input class="form-control" type="search" id="site-search" name="q" placeholder="Search..." required>
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="date" id="checkin-date" name="checkin" required>
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="date" id="checkout-date" name="checkout" required>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" name="guests" id="guests">
+                    <option value="1 Guest 1 Room">1 Guest 1 Room</option>
+                    <option value="2 Guest 1 Room">2 Guest 1 Room</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" type="submit">Search</button>
+            </div>
+        </div>
+    </form>
         </section>
 
         <section id="results-section" class="mb-5">

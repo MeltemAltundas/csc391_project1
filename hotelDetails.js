@@ -12,57 +12,57 @@ const hotelDescription = document.getElementById('hotelDescription');
 const hotelLocationText = document.getElementById('hotelLocationText');
 
 if (selectedHotel) {
-    if (hotelLocationText) {
-        hotelLocationText.textContent = selectedHotel.addressline1 || selectedHotel.address1 || selectedHotel.city || 'Location information not available.';
-    }
+  if (hotelLocationText) {
+    hotelLocationText.textContent = selectedHotel.addressline1 || selectedHotel.address1 || selectedHotel.city || 'Location information not available.';
+  }
 
-    if (hotelName) {
-        hotelName.textContent = selectedHotel.hotel_name || selectedHotel.name || 'Hotel Name';
-    }
+  if (hotelName) {
+    hotelName.textContent = selectedHotel.hotel_name || selectedHotel.name || 'Hotel Name';
+  }
 
-    if (hotelLocation) {
-        hotelLocation.innerHTML = (selectedHotel.city || '') + ', ' + (selectedHotel.country || selectedHotel.countryCode || '') + ' <a href="#">Show on Map</a>';
-    }
+  if (hotelLocation) {
+    hotelLocation.innerHTML = (selectedHotel.city || '') + ', ' + (selectedHotel.country || selectedHotel.countryCode || '') + ' <a href="#">Show on Map</a>';
+  }
 
-    if (hotelDescription) {
-        hotelDescription.textContent = selectedHotel.overview || selectedHotel.shortDescription || 'No description available.';
-    }
+  if (hotelDescription) {
+    hotelDescription.textContent = selectedHotel.overview || selectedHotel.shortDescription || 'No description available.';
+  }
 
-    if (hotelCarouselInner) {
-        const mainImage = selectedHotel.hotelImage || selectedHotel.photo1 || selectedHotel.thumbNailUrl || 'https://placehold.co/800x400?text=Hotel+Image';
-        const carouselImages = [
-            mainImage,
-            "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=400&fit=crop", 
-            "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=400&fit=crop"  
-        ];
+  if (hotelCarouselInner) {
+    const mainImage = selectedHotel.hotelImage || selectedHotel.photo1 || selectedHotel.thumbNailUrl || 'https://placehold.co/800x400?text=Hotel+Image';
+    const carouselImages = [
+      mainImage,
+      "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=400&fit=crop"
+    ];
 
-        let carouselHTML = '';
-        carouselImages.forEach((img, index) => {
-            const activeClass = index === 0 ? "active" : "";
-            carouselHTML += `
+    let carouselHTML = '';
+    carouselImages.forEach((img, index) => {
+      const activeClass = index === 0 ? "active" : "";
+      carouselHTML += `
                 <div class="carousel-item ${activeClass}">
                     <img src="${img}" class="d-block w-100 object-fit-cover" style="height: 400px;" alt="Hotel Photo ${index + 1}">
                 </div>
             `;
-        });
-        hotelCarouselInner.innerHTML = carouselHTML;
-    }
+    });
+    hotelCarouselInner.innerHTML = carouselHTML;
+  }
 }
 
 let roomsRendered = false;
 
 topBookBtn.addEventListener('click', function () {
-    roomSection.classList.remove('d-none');
+  roomSection.classList.remove('d-none');
 
 
-    roomSection.scrollIntoView({ behavior: 'smooth' });
+  roomSection.scrollIntoView({ behavior: 'smooth' });
 
-    if (!roomsRendered) {
-        const baseRate = selectedHotel && selectedHotel.lowRate ? selectedHotel.lowRate : 120;
-        const deluxeRate = Math.round(baseRate * 1.5); // Deluxe is 50% more expensive
-        const selectedNights = selectedHotel && selectedHotel.selectedNights ? selectedHotel.selectedNights : 1;
+  if (!roomsRendered) {
+    const baseRate = selectedHotel && selectedHotel.lowRate ? selectedHotel.lowRate : 120;
+    const deluxeRate = Math.round(baseRate * 1.5); // Deluxe is 50% more expensive
+    const selectedNights = selectedHotel && selectedHotel.selectedNights ? selectedHotel.selectedNights : 1;
 
-        roomsContainer.innerHTML = `
+    roomsContainer.innerHTML = `
       <div class="room-card row align-items-center border rounded p-3 mb-3">
         <div class="col-md-3">
           <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300&h=200&fit=crop"
@@ -141,37 +141,36 @@ topBookBtn.addEventListener('click', function () {
       </div>
     `;
 
-        roomsRendered = true;
-    }
+    roomsRendered = true;
+  }
 });
 
 roomsContainer.addEventListener('click', function (event) {
-    if (event.target.classList.contains('room-book-btn')) {
-        const button = event.target;
-        const roomType = button.dataset.roomType;
-        const pricePerNight = Number(button.dataset.price);
-        const selectId = button.dataset.selectId;
+  if (event.target.classList.contains('room-book-btn')) {
+    const button = event.target;
+    const roomType = button.dataset.roomType;
+    const pricePerNight = Number(button.dataset.price);
+    const selectId = button.dataset.selectId;
 
-        const roomCountSelect = document.getElementById(selectId);
-        const roomCount = Number(roomCountSelect.value);
+    const roomCountSelect = document.getElementById(selectId);
+    const roomCount = Number(roomCountSelect.value);
 
-        if (!roomCount) {
-            alert('Please select room count first.');
-            return;
-        }
-
-        const selectedNights = selectedHotel && selectedHotel.selectedNights ? selectedHotel.selectedNights : 1;
-        const total = pricePerNight * roomCount * selectedNights;
-
-        const selectedRoomData = {
-            roomType: roomType,
-            roomCount: roomCount,
-            pricePerNight: pricePerNight,
-            totalPerNight: total
-        };
-
-        sessionStorage.setItem('selectedRoom', JSON.stringify(selectedRoomData));
-
-        window.location.href = 'payment.html';
+    if (!roomCount) {
+      alert('Please select room count first.');
+      return;
     }
+
+    const selectedNights = selectedHotel && selectedHotel.selectedNights ? selectedHotel.selectedNights : 1;
+    const total = pricePerNight * roomCount * selectedNights;
+
+    const updatedHotel = JSON.parse(sessionStorage.getItem('selectedHotel'));
+    updatedHotel.roomType = roomType;
+    updatedHotel.roomCount = roomCount;
+    updatedHotel.pricePerNight = pricePerNight;
+    updatedHotel.totalPrice = total;
+
+    sessionStorage.setItem('selectedHotel', JSON.stringify(updatedHotel));
+
+    window.location.href = 'payment.html';
+  }
 });

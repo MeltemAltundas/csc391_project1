@@ -1,0 +1,20 @@
+#popular-container .carousel-item,
+#search-carousel-container .carousel-item {
+    cursor: pointer;
+}
+#search-carousel-container .card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#search-carousel-container .card:hover {
+    transform: translateY(-4px);
+}
+.hotel-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.hotel-card:hover {
+    transform: translateY(-4px);
+}

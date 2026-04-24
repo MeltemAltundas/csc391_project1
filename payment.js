@@ -1,4 +1,3 @@
-const selectedRoom = JSON.parse(sessionStorage.getItem('selectedRoom'));
 const selectedHotel = JSON.parse(sessionStorage.getItem('selectedHotel'));
 
 const paymentForm = document.getElementById('paymentForm');
@@ -9,20 +8,17 @@ const summaryPricePerNight = document.getElementById('summaryPricePerNight');
 const summaryTotal = document.getElementById('summaryTotal');
 const summaryHotelName = document.getElementById('summaryHotelName');
 
-if (selectedRoom) {
+if (selectedHotel) {
     bookingSummary.classList.remove('d-none');
-    summaryRoomType.textContent = selectedRoom.roomType;
-    summaryRoomCount.textContent = selectedRoom.roomCount;
-    summaryPricePerNight.textContent = selectedRoom.pricePerNight;
-    summaryTotal.textContent = selectedRoom.totalPerNight; // This is the grand total we calculated earlier
-    
-    if (selectedHotel) {
-        summaryHotelName.textContent = selectedHotel.hotel_name || selectedHotel.name;
-    }
+    summaryHotelName.textContent = selectedHotel.hotel_name || selectedHotel.name;
+    summaryRoomType.textContent = selectedHotel.roomType || 'N/A';
+    summaryRoomCount.textContent = selectedHotel.roomCount || 1;
+    summaryPricePerNight.textContent = selectedHotel.pricePerNight || 0;
+    summaryTotal.textContent = selectedHotel.totalPrice || 0;
 }
 
 paymentForm.addEventListener('submit', function (event) {
-    event.preventDefault(); 
+    event.preventDefault();
 
     const firstName = document.getElementById('fname').value;
     const lastName = document.getElementById('lname').value;
@@ -45,15 +41,15 @@ paymentForm.addEventListener('submit', function (event) {
 
     const reservation = {
         hotel: {
-            name: selectedHotel ? (selectedHotel.hotel_name || selectedHotel.name) : "Unknown Hotel",
-            address: selectedHotel ? (selectedHotel.addressline1 || selectedHotel.address1 || selectedHotel.city || '') : "Unknown Address"
+            name: selectedHotel ? (selectedHotel.hotel_name || selectedHotel.name) : 'Unknown Hotel',
+            address: selectedHotel ? (selectedHotel.addressline1 || selectedHotel.address1 || selectedHotel.city || '') : 'Unknown Address'
         },
         reservationData: {
-            roomCount: selectedRoom ? selectedRoom.roomCount : 1,
-            guestCount: selectedHotel && selectedHotel.selectedGuests ? selectedHotel.selectedGuests : 1,
-            roomType: selectedRoom ? selectedRoom.roomType : "Standard",
-            checkInDate: "2026-05-01",  // Using mock dates as placeholder
-            checkOutDate: "2026-05-05"
+            roomCount: selectedHotel ? selectedHotel.roomCount : 1,
+            guestCount: selectedHotel ? selectedHotel.selectedGuests : 1,
+            roomType: selectedHotel ? selectedHotel.roomType : 'Standard',
+            checkInDate: selectedHotel.checkInDate || sessionStorage.getItem('checkInDate') || '',
+            checkOutDate: selectedHotel.checkOutDate || sessionStorage.getItem('checkOutDate') || '',
         },
         guestData: {
             firstName: firstName,
@@ -69,13 +65,11 @@ paymentForm.addEventListener('submit', function (event) {
                 cvv: cvc
             },
             paymentMethod: 'Credit Card',
-            totalAmount: selectedRoom ? selectedRoom.totalPerNight : 0
+            totalAmount: selectedHotel ? selectedHotel.totalPrice : 0
         }
     };
 
     sessionStorage.setItem('reservation', JSON.stringify(reservation));
-    
-    console.log("Final Reservation Saved:", reservation);
 
     paymentForm.reset();
     alert('Booking completed successfully! Your reservation has been saved.');

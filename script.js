@@ -2,22 +2,22 @@ const dealsAndDiscounts = [
     {
         title: "Earn 3K Bonus Points",
         details: "Earn 3K Bonus Points for every 3 nights you stay with us.",
-        imageUrl: "https://picsum.photos/id/1015/300/200" 
+        imageUrl: "https://picsum.photos/id/1015/300/200"
     },
     {
         title: "Earn 1 Free Night",
         details: "Stay at selected hotels for 10 days and receive 1 complimentary night for your extended stay.",
-        imageUrl: "https://picsum.photos/id/1039/300/200" 
+        imageUrl: "https://picsum.photos/id/1039/300/200"
     },
     {
         title: "Weekend Getaway 20% Off",
         details: "Book your weekend getaway now and save 20% on all of our luxury suites.",
-        imageUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop" 
+        imageUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop"
     },
     {
         title: "Free Breakfast Included",
         details: "Start your morning right! Enjoy a complimentary gourmet breakfast every day of your stay.",
-        imageUrl: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=300&h=200&fit=crop" 
+        imageUrl: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=300&h=200&fit=crop"
     }
 ];
 const popularSearches = [
@@ -27,7 +27,7 @@ const popularSearches = [
         numberOfHotels: "8280",
         minPrice: "2000₺",
         maxPrice: "15000₺",
-        imageUrl: "https://picsum.photos/id/1016/300/200" 
+        imageUrl: "https://picsum.photos/id/1016/300/200"
     },
     {
         title: "Muğla",
@@ -35,7 +35,7 @@ const popularSearches = [
         numberOfHotels: "7275",
         minPrice: "2500₺",
         maxPrice: "20000₺",
-        imageUrl: "https://picsum.photos/id/1018/300/200" 
+        imageUrl: "https://picsum.photos/id/1018/300/200"
     },
     {
         title: "Kappadokien",
@@ -43,7 +43,7 @@ const popularSearches = [
         numberOfHotels: "1386",
         minPrice: "3000₺",
         maxPrice: "18000₺",
-        imageUrl: "https://picsum.photos/id/1036/300/200" 
+        imageUrl: "https://picsum.photos/id/1036/300/200"
     },
     {
         title: "Kuzey Kıbrıs",
@@ -51,15 +51,15 @@ const popularSearches = [
         numberOfHotels: "592",
         minPrice: "3500₺",
         maxPrice: "25000₺",
-        imageUrl: "https://picsum.photos/id/1043/300/200" 
+        imageUrl: "https://picsum.photos/id/1043/300/200"
     }
 ]
 
 function renderDeals() {
     const container = document.getElementById('deals-container');
     container.innerHTML = "";
-    
-    dealsAndDiscounts.forEach(function(deal) {
+
+    dealsAndDiscounts.forEach(function (deal) {
         const cardHTML = `
             <div class="col-md-3 mb-4">
                 <div class="card h-100 shadow-sm">
@@ -82,12 +82,12 @@ function renderPopularSearches() {
     const container = document.getElementById('popular-container');
     container.innerHTML = "";
 
-    let allCards= "";
+    let allCards = "";
 
-    popularSearches.forEach(function(popular, index){
+    popularSearches.forEach(function (popular, index) {
         const activeClass = index === 0 ? "active" : "";
         allCards += `
-        <div class="carousel-item ${activeClass}" onclick="window.location.href='searchResults.html?q=${popular.title}'" style="cursor: pointer;">
+        <div class="carousel-item ${activeClass}" data-search="${popular.title}">
             <div class="card mx-auto" style="width: 18rem;">
                 <img src="${popular.imageUrl}" class="card-img-top" alt="${popular.title}" loading="lazy">
                 <div class="card-body">
@@ -101,6 +101,15 @@ function renderPopularSearches() {
     });
 
     container.innerHTML = allCards;
+
+    document.querySelectorAll('#popular-container .carousel-item').forEach(function (item) {
+        item.addEventListener('click', function () {
+            const query = item.dataset.search;
+            const checkin = document.getElementById('checkin-date').value;
+            const checkout = document.getElementById('checkout-date').value;
+            window.location.href = 'searchResults.html?q=' + query + '&checkin=' + checkin + '&checkout=' + checkout;
+        });
+    });
 }
 
 function handleSearchSubmission() {
@@ -138,19 +147,11 @@ function handleSearchSubmission() {
                 dealsSection.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>Search Results</h2>
-                        <a href="searchResults.html?q=${searchInput}" class="text-primary text-decoration-none fw-bold">See more deals &rarr;</a>
+                        <a href="searchResults.html?q=${searchInput}&checkin=${document.getElementById('checkin-date').value}&checkout=${document.getElementById('checkout-date').value}" class="text-primary text-decoration-none fw-bold">See more deals &rarr;</a>
                     </div>
                     <div id="search-results-carousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner" id="search-carousel-container">
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#search-results-carousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#search-results-carousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
                     </div>
                 `;
 
@@ -160,32 +161,44 @@ function handleSearchSubmission() {
                 if (hotels.length === 0) {
                     carouselContainer.innerHTML = `<div class="carousel-item active"><p class="text-center">No hotels found matching "${searchInput}".</p></div>`;
                 } else {
-                    hotels.forEach((hotel, index) => {
-                        const activeClass = index === 0 ? "active" : "";
-                        let imageUrl = hotel.thumbNailUrl ? (hotel.thumbNailUrl.startsWith('http') ? hotel.thumbNailUrl : `https://www.travelnow.com${hotel.thumbNailUrl}`) : 'https://placehold.co/300x200?text=Hotel+Image';
+                    let searchCards = '<div class="carousel-item active"><div class="d-flex gap-2 justify-content-center">';
+
+                    hotels.forEach((hotel) => {
+                        let imageUrl = hotel.thumbNailUrl
+                            ? (hotel.thumbNailUrl.startsWith('http') ? hotel.thumbNailUrl : `https://www.travelnow.com${hotel.thumbNailUrl}`)
+                            : 'https://placehold.co/300x200?text=Hotel+Image';
 
                         searchCards += `
-                        <div class="carousel-item ${activeClass}" onclick="window.location.href='searchResults.html?q=${hotel.name}'" style="cursor: pointer;">
-                            <div class="card mx-auto" style="width: 18rem;">
-                                <img src="${imageUrl}" class="card-img-top object-fit-cover" height="200" alt="${hotel.name}" onerror="this.src='https://placehold.co/300x200?text=Image+Not+Found'">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title fw-bold">${hotel.name}</h5>
-                                    <p class="card-text text-muted mb-1">🏙️ ${hotel.city || 'Location Unknown'}</p>
+                        <div class="card" style="width: 13rem;" data-hotel-name="${hotel.name}">
+                            <img src="${imageUrl}" class="card-img-top object-fit-cover" height="150" alt="${hotel.name}"
+                                onerror="this.src='https://placehold.co/300x200?text=Image+Not+Found'">
+                            <div class="card-body text-center p-2">
+                                <h6 class="card-title fw-bold mb-1">${hotel.name}</h6>
+                                    <p class="card-text text-muted small mb-1">🏙️ ${hotel.city || 'Unknown'}</p>
                                     <p class="card-text fw-bold text-primary mb-0">$${hotel.lowRate || 0} / night</p>
-                                </div>
                             </div>
                         </div>
                         `;
                     });
+
+                    searchCards += '</div></div>';
                     carouselContainer.innerHTML = searchCards;
+
+                    document.querySelectorAll('#search-carousel-container .card').forEach(function (card) {
+                        card.addEventListener('click', function () {
+                            const checkin = document.getElementById('checkin-date').value;
+                            const checkout = document.getElementById('checkout-date').value;
+                            window.location.href = 'searchResults.html?q=' + card.dataset.hotelName + '&checkin=' + checkin + '&checkout=' + checkout;
+                        });
+                    });
                 }
             }
         });
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  renderDeals();
-  renderPopularSearches();
-  handleSearchSubmission();
+document.addEventListener('DOMContentLoaded', function () {
+    renderDeals();
+    renderPopularSearches();
+    handleSearchSubmission();
 });

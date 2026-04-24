@@ -17,13 +17,14 @@
                 <label for="site-search" class="mb-2 fw-bold">Search the hotels</label>
                 <div class="row g-2 align-items-center">
                     <div class="col-md-3">
-                        <input class="form-control" type="search" id="site-search" name="q" placeholder="Search...">
+                        <input class="form-control" type="search" id="site-search" name="q" placeholder="Search..."
+                            required>
                     </div>
                     <div class="col-md-2">
-                        <input class="form-control" type="date" id="checkin-date" name="checkin">
+                        <input class="form-control" type="date" id="checkin-date" name="checkin" required>
                     </div>
                     <div class="col-md-2">
-                        <input class="form-control" type="date" id="checkout-date" name="checkout">
+                        <input class="form-control" type="date" id="checkout-date" name="checkout" required>
                     </div>
                     <div class="col-md-3">
                         <select class="form-select" name="guests" id="guests">
@@ -49,6 +50,16 @@
             <h2 class="mb-4">Popular Searches</h2>
             <div id="popular-carousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner" id="popular-container"></div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#popular-carousel"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#popular-carousel"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
 
             </div>
 
