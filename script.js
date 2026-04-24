@@ -87,7 +87,7 @@ function renderPopularSearches() {
     popularSearches.forEach(function(popular, index){
         const activeClass = index === 0 ? "active" : "";
         allCards += `
-        <div class="carousel-item ${activeClass}">
+        <div class="carousel-item ${activeClass}" onclick="window.location.href='searchResults.html?q=${popular.title}'" style="cursor: pointer;">
             <div class="card mx-auto" style="width: 18rem;">
                 <img src="${popular.imageUrl}" class="card-img-top" alt="${popular.title}" loading="lazy">
                 <div class="card-body">
@@ -103,7 +103,89 @@ function renderPopularSearches() {
     container.innerHTML = allCards;
 }
 
+function handleSearchSubmission() {
+    const searchForm = document.querySelector('form[role="search"]');
+
+    if (searchForm) {
+        searchForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const searchInput = document.getElementById('site-search').value.trim().toLowerCase();
+            const dealsSection = document.getElementById('deals-section');
+
+            let hotels = (typeof hotelsData !== 'undefined' && hotelsData.hotels) ? hotelsData.hotels : [];
+
+            if (searchInput !== "") {
+                hotels = hotels.filter(hotel => {
+                    const hotelName = hotel.name ? hotel.name.toLowerCase() : "";
+                    const hotelCity = hotel.city ? hotel.city.toLowerCase() : "";
+                    const hotelDesc = hotel.locationDescription ? hotel.locationDescription.toLowerCase() : "";
+                    return hotelName.includes(searchInput) || hotelCity.includes(searchInput) || hotelDesc.includes(searchInput);
+                });
+            }
+
+            hotels.sort((a, b) => {
+                const nameA = a.name ? a.name.toLowerCase() : '';
+                const nameB = b.name ? b.name.toLowerCase() : '';
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            });
+
+            hotels = hotels.slice(0, 5);
+
+            if (dealsSection) {
+                dealsSection.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Search Results</h2>
+                        <a href="searchResults.html?q=${searchInput}" class="text-primary text-decoration-none fw-bold">See more deals &rarr;</a>
+                    </div>
+                    <div id="search-results-carousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner" id="search-carousel-container">
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#search-results-carousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#search-results-carousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                `;
+
+                const carouselContainer = document.getElementById('search-carousel-container');
+                let searchCards = "";
+
+                if (hotels.length === 0) {
+                    carouselContainer.innerHTML = `<div class="carousel-item active"><p class="text-center">No hotels found matching "${searchInput}".</p></div>`;
+                } else {
+                    hotels.forEach((hotel, index) => {
+                        const activeClass = index === 0 ? "active" : "";
+                        let imageUrl = hotel.thumbNailUrl ? (hotel.thumbNailUrl.startsWith('http') ? hotel.thumbNailUrl : `https://www.travelnow.com${hotel.thumbNailUrl}`) : 'https://placehold.co/300x200?text=Hotel+Image';
+
+                        searchCards += `
+                        <div class="carousel-item ${activeClass}" onclick="window.location.href='searchResults.html?q=${hotel.name}'" style="cursor: pointer;">
+                            <div class="card mx-auto" style="width: 18rem;">
+                                <img src="${imageUrl}" class="card-img-top object-fit-cover" height="200" alt="${hotel.name}" onerror="this.src='https://placehold.co/300x200?text=Image+Not+Found'">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title fw-bold">${hotel.name}</h5>
+                                    <p class="card-text text-muted mb-1">🏙️ ${hotel.city || 'Location Unknown'}</p>
+                                    <p class="card-text fw-bold text-primary mb-0">$${hotel.lowRate || 0} / night</p>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                    });
+                    carouselContainer.innerHTML = searchCards;
+                }
+            }
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   renderDeals();
   renderPopularSearches();
+  handleSearchSubmission();
 });

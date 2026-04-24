@@ -34,25 +34,19 @@
             </div>
         </section>
 
-        <section class="hotel-gallery row g-3 mb-4">
-            <div class="col-md-3">
-                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945"
-                    class="img-fluid rounded hotel-img" alt="Hotel photo 1">
-            </div>
-            <div class="col-md-3">
-                <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa" class="img-fluid rounded hotel-img"
-                    alt="Hotel photo 2">
-            </div>
-            <div class="col-md-3">
-                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"
-                    class="img-fluid rounded hotel-img" alt="Hotel photo 3">
-            </div>
-            <div class="col-md-3">
-                <div class="last-photo-wrapper">
-                    <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"
-                        class="img-fluid rounded hotel-img" alt="Hotel photo 4">
-                    <div class="photo-overlay">+14 photos</div>
+        <section id="hotelCarouselSection" class="mb-4">
+            <div id="hotelPhotoCarousel" class="carousel slide rounded overflow-hidden shadow-sm" data-bs-ride="carousel">
+                <div class="carousel-inner" id="hotelCarouselInner">
+                    <!-- JavaScript will inject the slides here -->
                 </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#hotelPhotoCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#hotelPhotoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
         </section>
 

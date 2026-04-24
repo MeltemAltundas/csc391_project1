@@ -1,40 +1,51 @@
 const topBookBtn = document.getElementById('topBookBtn');
 const roomSection = document.getElementById('roomSelectionSection');
 const roomsContainer = document.getElementById('roomsContainer');
+const hotelCarouselInner = document.getElementById('hotelCarouselInner');
+
 const selectedHotel = JSON.parse(sessionStorage.getItem('selectedHotel'));
-console.log(selectedHotel);
+console.log("Loaded Hotel Data:", selectedHotel);
 
 const hotelName = document.getElementById('hotelName');
 const hotelLocation = document.getElementById('hotelLocation');
 const hotelDescription = document.getElementById('hotelDescription');
-
 const hotelLocationText = document.getElementById('hotelLocationText');
 
-if (selectedHotel && hotelLocationText) {
-    hotelLocationText.textContent =
-        selectedHotel.addressline1 ||
-        selectedHotel.address1 ||
-        selectedHotel.city ||
-        'Location information not available.';
-}
-
 if (selectedHotel) {
+    if (hotelLocationText) {
+        hotelLocationText.textContent = selectedHotel.addressline1 || selectedHotel.address1 || selectedHotel.city || 'Location information not available.';
+    }
+
     if (hotelName) {
         hotelName.textContent = selectedHotel.hotel_name || selectedHotel.name || 'Hotel Name';
     }
 
     if (hotelLocation) {
-        hotelLocation.innerHTML =
-            (selectedHotel.city || '') + ', ' +
-            (selectedHotel.country || selectedHotel.countryCode || '') +
-            ' <a href="#">Show on Map</a>';
+        hotelLocation.innerHTML = (selectedHotel.city || '') + ', ' + (selectedHotel.country || selectedHotel.countryCode || '') + ' <a href="#">Show on Map</a>';
     }
 
     if (hotelDescription) {
-        hotelDescription.textContent =
-            selectedHotel.overview ||
-            selectedHotel.shortDescription ||
-            'No description available.';
+        hotelDescription.textContent = selectedHotel.overview || selectedHotel.shortDescription || 'No description available.';
+    }
+
+    if (hotelCarouselInner) {
+        const mainImage = selectedHotel.hotelImage || selectedHotel.photo1 || selectedHotel.thumbNailUrl || 'https://placehold.co/800x400?text=Hotel+Image';
+        const carouselImages = [
+            mainImage,
+            "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=400&fit=crop", 
+            "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=400&fit=crop"  
+        ];
+
+        let carouselHTML = '';
+        carouselImages.forEach((img, index) => {
+            const activeClass = index === 0 ? "active" : "";
+            carouselHTML += `
+                <div class="carousel-item ${activeClass}">
+                    <img src="${img}" class="d-block w-100 object-fit-cover" style="height: 400px;" alt="Hotel Photo ${index + 1}">
+                </div>
+            `;
+        });
+        hotelCarouselInner.innerHTML = carouselHTML;
     }
 }
 
@@ -43,11 +54,18 @@ let roomsRendered = false;
 topBookBtn.addEventListener('click', function () {
     roomSection.classList.remove('d-none');
 
+
+    roomSection.scrollIntoView({ behavior: 'smooth' });
+
     if (!roomsRendered) {
+        const baseRate = selectedHotel && selectedHotel.lowRate ? selectedHotel.lowRate : 120;
+        const deluxeRate = Math.round(baseRate * 1.5); // Deluxe is 50% more expensive
+        const selectedNights = selectedHotel && selectedHotel.selectedNights ? selectedHotel.selectedNights : 1;
+
         roomsContainer.innerHTML = `
       <div class="room-card row align-items-center border rounded p-3 mb-3">
         <div class="col-md-3">
-          <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2"
+          <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300&h=200&fit=crop"
                class="img-fluid rounded room-img" alt="Standard Room">
         </div>
 
@@ -74,10 +92,10 @@ topBookBtn.addEventListener('click', function () {
         </div>
 
         <div class="col-md-2 text-md-end mt-3 mt-md-0">
-          <p class="mb-2"><strong>$120 / night</strong></p>
+          <p class="mb-2"><strong>$${baseRate} / night</strong></p>
           <button class="btn btn-primary room-book-btn"
                   data-room-type="Standard Room"
-                  data-price="120"
+                  data-price="${baseRate}"
                   data-select-id="roomCount1">
             Book now
           </button>
@@ -86,7 +104,7 @@ topBookBtn.addEventListener('click', function () {
 
       <div class="room-card row align-items-center border rounded p-3 mb-3">
         <div class="col-md-3">
-          <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427"
+          <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=300&h=200&fit=crop"
                class="img-fluid rounded room-img" alt="Deluxe Room">
         </div>
 
@@ -112,10 +130,10 @@ topBookBtn.addEventListener('click', function () {
         </div>
 
         <div class="col-md-2 text-md-end mt-3 mt-md-0">
-          <p class="mb-2"><strong>$180 / night</strong></p>
+          <p class="mb-2"><strong>$${deluxeRate} / night</strong></p>
           <button class="btn btn-primary room-book-btn"
                   data-room-type="Deluxe Room"
-                  data-price="180"
+                  data-price="${deluxeRate}"
                   data-select-id="roomCount2">
             Book now
           </button>
@@ -131,7 +149,7 @@ roomsContainer.addEventListener('click', function (event) {
     if (event.target.classList.contains('room-book-btn')) {
         const button = event.target;
         const roomType = button.dataset.roomType;
-        const price = Number(button.dataset.price);
+        const pricePerNight = Number(button.dataset.price);
         const selectId = button.dataset.selectId;
 
         const roomCountSelect = document.getElementById(selectId);
@@ -142,20 +160,18 @@ roomsContainer.addEventListener('click', function (event) {
             return;
         }
 
-        const total = price * roomCount;
+        const selectedNights = selectedHotel && selectedHotel.selectedNights ? selectedHotel.selectedNights : 1;
+        const total = pricePerNight * roomCount * selectedNights;
 
         const selectedRoomData = {
             roomType: roomType,
             roomCount: roomCount,
-            pricePerNight: price,
+            pricePerNight: pricePerNight,
             totalPerNight: total
         };
 
         sessionStorage.setItem('selectedRoom', JSON.stringify(selectedRoomData));
 
-        // kullanıcıyı payment sayfasına yönlendir
-        //alert('Redirecting to payment...');
         window.location.href = 'payment.html';
     }
 });
-
